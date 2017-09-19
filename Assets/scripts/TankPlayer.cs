@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TankPlayer : MonoBehaviour 
 {
@@ -9,12 +10,21 @@ public class TankPlayer : MonoBehaviour
 
   public Transform ShotPoint;
 
-  public GameObject BulletLame;
-  public GameObject BulletSplash;
+  public Image BulletTypeSprite;
+
+  public List<GameObject> Bullets;
+  public List<Sprite> WeaponIcons;
+
+  GlobalConstants.BulletType _bulletType = GlobalConstants.BulletType.LAME;
 
   bool _isMoving = false;
 
   float _acceleration = 0.0f;
+
+  void Awake()
+  {
+    BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
+  }
 
   Vector3 _cameraPosition = Vector3.zero;
   void Update()
@@ -27,8 +37,33 @@ public class TankPlayer : MonoBehaviour
 
     if (Input.GetKeyDown(KeyCode.X))
     {
-      GameObject b = Instantiate(BulletLame, new Vector3(ShotPoint.position.x, ShotPoint.position.y, ShotPoint.position.z), Quaternion.identity);
-      b.GetComponent<BulletLame>().Propel(new Vector3(_cos, _sin, 0.0f), GlobalConstants.BulletLameSpeed);
+      GameObject b = Instantiate(Bullets[(int)_bulletType], new Vector3(ShotPoint.position.x, ShotPoint.position.y, ShotPoint.position.z), Quaternion.identity);
+      b.GetComponent<BulletBase>().Propel(new Vector3(_cos, _sin, 0.0f), GlobalConstants.BulletSpeedByType[_bulletType]);
+    }
+
+    if (Input.GetKeyDown(KeyCode.W))
+    {
+      int newType = (int)_bulletType + 1;
+      if (newType > (int)GlobalConstants.BulletType.MAX - 1)
+      {
+        newType = (int)GlobalConstants.BulletType.MAX - 1;
+      }
+
+      _bulletType = (GlobalConstants.BulletType)newType;
+
+      BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
+    }
+    else if (Input.GetKeyDown(KeyCode.Q))
+    {
+      int newType = (int)_bulletType - 1;
+      if (newType < 0)
+      {
+        newType = 0;
+      }
+
+      _bulletType = (GlobalConstants.BulletType)newType;
+
+      BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
     }
   }
 

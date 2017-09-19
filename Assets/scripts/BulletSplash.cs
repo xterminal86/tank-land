@@ -4,4 +4,12 @@ using UnityEngine;
 
 public class BulletSplash : BulletBase 
 {
+  void OnCollisionEnter2D(Collision2D collision)
+  {
+    _stopMoving = true;
+
+    AnimationComponent.SetTrigger("bullet-hit");
+
+    Destroy(gameObject, 1.0f);
+  }
 }
