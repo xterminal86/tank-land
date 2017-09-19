@@ -4,37 +4,34 @@ using UnityEngine;
 
 public class BulletBase : MonoBehaviour 
 {
+  public Rigidbody2D RigidbodyComponent;
   public Animator AnimationComponent;
 
-  protected float _bulletSpeed = 1.0f;
   protected bool _stopMoving = false;
 
-  public void Propel(Vector3 direction, float bulletSpeed = 1.0f)
+  float _bulletSpeed = 0.0f;
+
+  Vector2 _direction = Vector2.zero;
+  public void Propel(Vector2 direction, float bulletSpeed = 1.0f)
   {
-    _position = transform.localPosition;
     _direction = direction;
     _bulletSpeed = bulletSpeed;
   }
 
-  Vector3 _position = Vector3.zero;
-  Vector3 _direction = Vector3.zero;
-  void Update()
+  void FixedUpdate()
   {
-    if (_position.x > GlobalConstants.MapSize || _position.x < 0.0f ||
-        _position.y > GlobalConstants.MapSize || _position.y < 0.0f)
-    {
-      Destroy(gameObject);
-      return;
-    }
-
     if (_stopMoving)
     {
       return;
     }
-    
-    _position.x += _direction.x * (Time.smoothDeltaTime * _bulletSpeed);
-    _position.y += _direction.y * (Time.smoothDeltaTime * _bulletSpeed);
 
-    transform.localPosition = _position;
+    RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (_bulletSpeed * Time.fixedDeltaTime));
+
+    if (RigidbodyComponent.position.x > GlobalConstants.MapSize || RigidbodyComponent.position.x < -1.0f ||
+        RigidbodyComponent.position.y > GlobalConstants.MapSize || RigidbodyComponent.position.y < -1.0f)
+    {
+      Destroy(gameObject);
+      return;
+    }
   }
 }
