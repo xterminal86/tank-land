@@ -11,9 +11,13 @@ public class EnemyBase : MonoBehaviour
   public Text HitpointsText;
 
   public GameObject DamageIndicatorPrefab;
-  public Canvas DamageIndicatorsCanvas;
+  public AudioSource AttackSound;
+
+  [HideInInspector]
+  public RectTransform DamageIndicatorsCanvas;
 
   protected TankPlayer _player;
+  protected Main _app;
 
   protected Vector2 _direction = Vector2.zero;
 
@@ -27,14 +31,18 @@ public class EnemyBase : MonoBehaviour
   }
 
   void Awake()
-  {     
+  { 
+    _app = GameObject.Find("App").GetComponent<Main>();
+
+    DamageIndicatorsCanvas = GameObject.Find("damage-indicators").GetComponent<RectTransform>();
+
     Init();
   }
 
   protected DamageIndicator _damageIndicatorBar;
   protected virtual void Init()
   { 
-    var go = Instantiate(DamageIndicatorPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity, DamageIndicatorsCanvas.transform);
+    var go = Instantiate(DamageIndicatorPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity, DamageIndicatorsCanvas);
     _damageIndicatorBar = go.GetComponent<DamageIndicator>();
 
     _originalColor = SpriteRendererComponent.color;

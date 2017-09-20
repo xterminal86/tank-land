@@ -4,11 +4,14 @@ using UnityEngine;
 
 public static class GlobalConstants
 {
-  public const int MapSize = 64;
+  public const int MapSize = 100;
   public const int MaxWeaponIndex = 1;
+  public const int MaxEnemies = 10;
+  public const float SpawnTimeout = 3.0f;
+
   public const int BulletLameCooldown = 100;
-  public const int BulletSpreadCooldown = 500;
-  public const int BulletSplashCooldown = 1000;
+  public const int BulletSpreadCooldown = 1000;
+  public const int BulletSplashCooldown = 3000;
 
   public const int TankHitpoints = 400;
   public const float TankDefence = 0.5f;
@@ -19,14 +22,25 @@ public static class GlobalConstants
   public const int EnemyWeakDamage = 10;
   public const float EnemyWeakSpeed = 2.0f;
 
+  public const int EnemyMediumHitpoints = 40;
+  public const float EnemyMediumDefence = 0.5f;
+  public const int EnemyMediumDamage = 20;
+  public const float EnemyMediumSpeed = 1.0f;
+
+  public const int EnemyHeavyHitpoints = 80;
+  public const float EnemyHeavyDefence = 0.25f;
+  public const int EnemyHeavyDamage = 60;
+  public const float EnemyHeavySpeed = 0.5f;
+
   public const float BulletLameSpeed = 20.0f;
   public const float BulletSplashSpeed = 10.0f;
-  public const int BulletLameDamage = 2;
-  public const int BulletSplashDamage = 10;
+  public const int BulletLameDamage = 10;
+  public const int BulletSplashDamage = 80;
+  public const float BulletSplashRadius = 5.0f;
   public const float BulletSpreadArcAngle = 60.0f;
 
   public const float TankMoveSpeed = 6.0f;
-  public const float TankRotationSpeed = 1.0f;
+  public const float TankRotationSpeed = 2.0f;
 
   public const float EnemyPushForceFactor = 10.0f;
 

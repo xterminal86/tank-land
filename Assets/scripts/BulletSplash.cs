@@ -8,19 +8,55 @@ public class BulletSplash : BulletBase
 
   void OnCollisionEnter2D(Collision2D collision)
   {
-    //AnimationComponent.SetTrigger("bullet-hit");
-
-    var go = Instantiate(BulletHitAnimationPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
+    var go = Instantiate(BulletHitAnimationPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -3.0f), Quaternion.identity);
 
     Destroy(go, 1.0f);
 
-    if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
+    var objects = Physics2D.OverlapCircleAll(RigidbodyComponent.position, GlobalConstants.BulletSplashRadius);
+
+    AudioSource asc = go.GetComponent<AudioSource>();
+    asc.Play();
+
+    int playerLayer = LayerMask.NameToLayer("Player");
+    int enemiesLayer = LayerMask.NameToLayer("Enemies");
+
+    foreach (var obj in objects)
     {
-      var enemy = collision.gameObject.GetComponent<EnemyBase>();
+      if (obj.gameObject.layer == playerLayer || obj.gameObject.layer == enemiesLayer)
+      {
+        float distance = Vector2.Distance(RigidbodyComponent.position, obj.attachedRigidbody.position);
 
-      int damageDealt = (int)((float)GlobalConstants.BulletSplashDamage * enemy.Defence);
+        if (distance < 1.0f) distance = 1.0f;
 
-      enemy.ReceiveDamage(damageDealt);
+        int distanceSquared = (int)Mathf.Pow(distance, 2.0f);
+
+        if (obj.gameObject.layer == enemiesLayer)
+        {
+          var enemy = obj.gameObject.GetComponentInParent<EnemyBase>();
+
+          int damageDealt = (int)((float)(GlobalConstants.BulletSplashDamage / distanceSquared) * enemy.Defence);
+
+          if (damageDealt != 0)
+          {
+            enemy.ReceiveDamage(damageDealt);
+          }
+
+          //Debug.Log(obj.attachedRigidbody.position + " took " + damageDealt + " damage");
+        }
+        else if (obj.gameObject.layer == playerLayer)
+        {
+          var player = obj.gameObject.GetComponentInParent<TankPlayer>();
+
+          int damageDealt = (int)((float)(GlobalConstants.BulletSplashDamage / distanceSquared) * GlobalConstants.TankDefence);
+
+          if (damageDealt != 0)
+          {
+            player.ReceiveDamage(damageDealt);
+          }
+
+          //Debug.Log("Player took " + damageDealt + " damage");
+        }
+      }
     }
 
     Destroy(gameObject);

@@ -7,8 +7,8 @@ public class BulletSpread : BulletBase
   public List<BulletLame> Bullets;
 
   List<Vector2> _directions = new List<Vector2>();
-  public override void Propel(Vector2 direction, float angle, float bulletSpeed = 1)
-  { 
+  public override void Propel(Vector2 origin, Vector2 direction, float angle, float bulletSpeed = 1)
+  {     
     float angleDelta = GlobalConstants.BulletSpreadArcAngle / Bullets.Count;
     float startingAngle = angle - GlobalConstants.BulletSpreadArcAngle / 2.0f;
 
@@ -23,7 +23,7 @@ public class BulletSpread : BulletBase
     int index = 0;
     foreach (var item in Bullets)
     {
-      item.Propel(_directions[index], -1.0f, bulletSpeed);
+      item.Propel(origin, _directions[index], -1.0f, bulletSpeed);
       index++;
     }
   }

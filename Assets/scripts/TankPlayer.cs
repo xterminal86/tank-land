@@ -16,11 +16,15 @@ public class TankPlayer : MonoBehaviour
   public Image HitpointsBar;
 
   public GameObject PlayerDeathAnimation;
+  public AudioSource EnemyHitSound;
 
   public List<GameObject> Bullets;
   public List<Sprite> WeaponIcons;
+  public List<AudioSource> ShotSounds;
 
   GlobalConstants.BulletType _bulletType = GlobalConstants.BulletType.LAME;
+
+  public Main AppReference;
 
   bool _isMoving = false;
 
@@ -66,16 +70,20 @@ public class TankPlayer : MonoBehaviour
     {
       _cooldown = true;
 
+      Vector2 bulletOrigin = new Vector2(ShotPoint.position.x, ShotPoint.position.y);
+
       GameObject b = Instantiate(Bullets[(int)_bulletType], new Vector3(ShotPoint.position.x, ShotPoint.position.y, ShotPoint.position.z), Quaternion.identity);
 
       if (_bulletType == GlobalConstants.BulletType.SPREAD)
       {
-        b.GetComponent<BulletSpread>().Propel(new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
+        b.GetComponent<BulletSpread>().Propel(bulletOrigin, new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
       }
       else
       {
-        b.GetComponent<BulletBase>().Propel(new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
+        b.GetComponent<BulletBase>().Propel(bulletOrigin, new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
       }
+
+      ShotSounds[(int)_bulletType].Play();
 
       StartCoroutine(CooldownRoutine());
     }
@@ -169,13 +177,21 @@ public class TankPlayer : MonoBehaviour
 
     if (PlayerHitpoints <= 0)
     {
+      _hitpointsBarSize.x = _hpProgressDelta * PlayerHitpoints;
+      HitpointsBar.rectTransform.sizeDelta = _hitpointsBarSize;
+
+      AppReference.GameOverForm.SetActive(true);
+
+      AppReference.IsGameOver = true;
+      AppReference.GameOverSound.Play();
+
       DestroySelf();
     }
   }
 
   void DestroySelf()
   {
-    GameObject deathAnimation = Instantiate(PlayerDeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
+    GameObject deathAnimation = Instantiate(PlayerDeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -3.0f), Quaternion.identity);
     Destroy(deathAnimation, 2.0f);
 
     Destroy(gameObject);
@@ -183,7 +199,7 @@ public class TankPlayer : MonoBehaviour
 
   bool _isBeingPushed = false;
   public void Push(Vector2 dir)
-  {
+  {    
     _isBeingPushed = true;
     RigidbodyComponent.AddForce(dir, ForceMode2D.Impulse);
   }
@@ -217,8 +233,9 @@ public class TankPlayer : MonoBehaviour
 
     RigidbodyComponent.rotation = _tankRotation;
 
-    if ((int)RigidbodyComponent.velocity.x < 3 && (int)RigidbodyComponent.velocity.y < 3)
+    if ((int)Mathf.Abs(RigidbodyComponent.velocity.x) < 3 && (int)Mathf.Abs(RigidbodyComponent.velocity.y) < 3)
     {
+      RigidbodyComponent.velocity = Vector2.zero;
       _isBeingPushed = false;
     }
 
@@ -234,10 +251,10 @@ public class TankPlayer : MonoBehaviour
   }
 
   void OnCollisionEnter2D(Collision2D collision)
-  {    
-    /*
+  {   
+    /*      
     if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
-    {
+    {      
       var enemy = collision.gameObject.GetComponent<EnemyBase>();
 
       float damageDealt = GlobalConstants.TankRamDamage * enemy.Defence;

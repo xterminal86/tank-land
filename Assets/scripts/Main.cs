@@ -2,16 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviour 
 {
   public GameObject ObjectsHolder;
+  public GameObject EnemiesHolder;
 
   public GameObject TerrainTile;
   public GameObject Obstacle;
   public GameObject MapBorder;
 
+  public List<GameObject> Enemies;
+
   public TankPlayer Player;
+
+  public AudioSource GameOverSound;
+
+  public Text EnemiesCount;
+
+  public GameObject GameOverForm;
+
+  [HideInInspector]
+  public bool IsGameOver = false;
 
   List<Vector2> _obstaclesGrid = new List<Vector2>();
   void Awake()
@@ -37,7 +50,7 @@ public class Main : MonoBehaviour
 
     Player.SetPlayerPosition(new Vector3(GlobalConstants.MapSize / 2.0f, GlobalConstants.MapSize / 2.0f, 0.0f));
   }
-
+    
   void PlaceBorder()
   {
     for (float i = -0.6f; i < GlobalConstants.MapSize - 0.6f; i += 0.6f)
@@ -52,6 +65,9 @@ public class Main : MonoBehaviour
       Instantiate(MapBorder, new Vector3(GlobalConstants.MapSize - 0.6f, i, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
     }
   }
+
+  List<Vector2> _emptyCells = new List<Vector2>();
+  int[,] _obstaclesPlaced = new int[GlobalConstants.MapSize, GlobalConstants.MapSize];
 
   int _maxObstacles = 25;
   void PlaceObstacles()
@@ -82,7 +98,62 @@ public class Main : MonoBehaviour
 
       Instantiate(Obstacle, new Vector3(x, y, 0.0f), rotation, ObjectsHolder.transform);
 
+      _obstaclesPlaced[(int)x, (int)y] = 1;
+
       _obstaclesGrid.RemoveAt(index);
     }
+
+    for (int x = 0; x < GlobalConstants.MapSize; x++)
+    {
+      for (int y = 0; y < GlobalConstants.MapSize; y++)
+      {
+        if (_obstaclesPlaced[x, y] != 1)
+        {
+          _emptyCells.Add(new Vector2(x, y));
+        }
+      }
+    }
+  }
+
+  [HideInInspector]
+  public int EnemiesSpawned = 0;
+
+  float _spawnTimer = 0.0f;
+  void Update()
+  {
+    if (EnemiesSpawned >= GlobalConstants.MaxEnemies || IsGameOver)
+    {
+      return;
+    }
+
+    CountEnemies();
+    TryToSpawnEnemies();
+  }
+
+  void TryToSpawnEnemies()
+  {
+    if (_spawnTimer < GlobalConstants.SpawnTimeout)
+    {
+      _spawnTimer += Time.smoothDeltaTime;
+    }
+    else
+    {
+      _spawnTimer = 0.0f;
+      int index = Random.Range(0, Enemies.Count);
+      int cellIndex = Random.Range(0, _emptyCells.Count);
+
+      Instantiate(Enemies[index], new Vector3(_emptyCells[cellIndex].x, _emptyCells[cellIndex].y, -1.0f), Quaternion.identity, EnemiesHolder.transform);
+    }
+  }
+
+  void CountEnemies()
+  {
+    EnemiesSpawned = EnemiesHolder.transform.childCount;
+    EnemiesCount.text = EnemiesSpawned.ToString();
+  }
+
+  public void RestartGameHandler()
+  {
+    SceneManager.LoadScene("main");
   }
 }
