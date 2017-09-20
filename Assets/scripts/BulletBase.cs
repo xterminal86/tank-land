@@ -16,11 +16,18 @@ public class BulletBase : MonoBehaviour
   protected bool _isColliding = false;
 
   protected TankPlayer _playerRef;
+  protected Main _appRef;
 
   protected float _bulletSpeed = 0.0f;
 
   protected Vector2 _direction = Vector2.zero;
   protected Vector2 _bulletOrigin = Vector2.zero;
+
+  void Awake()
+  {
+    _appRef = GameObject.Find("App").GetComponent<Main>();
+  }
+
   public virtual void Propel(Vector2 origin, Vector2 direction, float angle, float bulletSpeed = 1.0f)
   {
     _playerRef = GameObject.Find("tank-player").GetComponent<TankPlayer>();
@@ -32,7 +39,9 @@ public class BulletBase : MonoBehaviour
 
   float _bulletVisibilityOffset = 25.0f;
   void FixedUpdate()
-  {
+  {    
+    if (_appRef.IsGameOver) return;
+
     _viewLimitMinX = _playerRef.RigidbodyComponent.position.x - _bulletVisibilityOffset;
     _viewLimitMaxX = _playerRef.RigidbodyComponent.position.x + _bulletVisibilityOffset;
     _viewLimitMinY = _playerRef.RigidbodyComponent.position.y - _bulletVisibilityOffset;

@@ -24,6 +24,11 @@ public class EnemyBase : MonoBehaviour
   protected Color _originalColor = Color.white;
 
   protected int _hitpoints = 1;
+  public int Hitpoints
+  {
+    get { return _hitpoints; }
+  }
+      
   protected float _defence = 1.0f;
   public float Defence
   {
@@ -53,22 +58,37 @@ public class EnemyBase : MonoBehaviour
     _direction.Normalize();
   }
 
-  public void ReceiveDamage(int damageReceived)
-  {
-    _damageShowTimeout = 0.0f;
-    _showDamageBar = true;
-
+  bool _isDestroying = false;
+  public void ReceiveDamage(int damageReceived, bool friendlyFire = false)
+  {    
     _hitpoints -= damageReceived;
+
+    _damageShowTimeout = 0.0f;
+    _showDamageBar = !friendlyFire;
 
     _damageIndicatorBar.Damage(damageReceived);
 
-    if (_hitpoints <= 0)
+    // Excerpt from https://docs.unity3d.com/Manual/ExecutionOrder.html
+    //
+    // "FixedUpdate: FixedUpdate is often called more frequently than Update. 
+    // "It can be called multiple times per frame, if the frame rate is low and it may not be called between frames at 
+    // "all if the frame rate is high. All physics calculations and updates occur immediately after FixedUpdate."
+    //
+    // Collision handling is happening after FixedUpdate, which in turn can be called multiple times per frame.
+    // Destroy only marks object for destroy, which will happen only in the next frame.
+    // So to prevent entering the condition multiple times, we use a boolean flag.
+    if (_hitpoints <= 0 && !_isDestroying)
     {
-      if (this is EnemyWeak) _app.Score += GlobalConstants.EnemyWeakScore;
-      if (this is EnemyMedium) _app.Score += GlobalConstants.EnemyMediumScore;
-      if (this is EnemyHeavy) _app.Score += GlobalConstants.EnemyHeavyScore;
+      _isDestroying = true;
 
-      _app.ScoreCount.text = _app.Score.ToString();
+      if (!friendlyFire)
+      {        
+        if (this is EnemyWeak) _app.Score += GlobalConstants.EnemyWeakScore;
+        if (this is EnemyMedium) _app.Score += GlobalConstants.EnemyMediumScore;
+        if (this is EnemyHeavy) _app.Score += GlobalConstants.EnemyHeavyScore;
+
+        _app.ScoreCount.text = _app.Score.ToString();
+      }
 
       var explosion = Instantiate(DeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
 
@@ -86,8 +106,10 @@ public class EnemyBase : MonoBehaviour
 
   float _damageShowTimeout = 0.0f;
   bool _showDamageBar = false;
-  void Update()
+  protected virtual void Update()
   {
+    if (_app.IsGameOver) return;
+
     _damageShowTimeout += Time.smoothDeltaTime;
 
     if (_damageShowTimeout > 2.0f)
@@ -111,7 +133,7 @@ public class EnemyBase : MonoBehaviour
 
   void FixedUpdate()
   {
-    if (_player == null)
+    if (_app.IsGameOver)
     {
       return;
     }
