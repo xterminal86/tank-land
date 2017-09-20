@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour 
 {
@@ -52,7 +53,7 @@ public class Main : MonoBehaviour
     }
   }
 
-  int _maxObstacles = 50;
+  int _maxObstacles = 25;
   void PlaceObstacles()
   {
     int mx = GlobalConstants.MapSize / 2;

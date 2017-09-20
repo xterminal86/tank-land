@@ -11,5 +11,14 @@ public class BulletSplash : BulletBase
     AnimationComponent.SetTrigger("bullet-hit");
 
     Destroy(gameObject, 1.0f);
+
+    if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
+    {
+      var enemy = collision.gameObject.GetComponent<EnemyBase>();
+
+      float damageDealt = GlobalConstants.BulletSplashDamage * enemy.Defence;
+
+      enemy.ReceiveDamage(damageDealt);
+    }
   }
 }

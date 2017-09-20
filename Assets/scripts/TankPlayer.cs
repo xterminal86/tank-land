@@ -11,6 +11,11 @@ public class TankPlayer : MonoBehaviour
   public Transform ShotPoint;
 
   public Image BulletTypeSprite;
+  public Image BulletCooldownProgress;
+
+  public Text HitpointsText;
+
+  public GameObject PlayerDeathAnimation;
 
   public List<GameObject> Bullets;
   public List<Sprite> WeaponIcons;
@@ -21,8 +26,13 @@ public class TankPlayer : MonoBehaviour
 
   float _acceleration = 0.0f;
 
+  bool _cooldown = false;
+
+  public float PlayerHitpoints = GlobalConstants.TankHitpoints;
+
   void Awake()
   {
+    PlayerHitpoints = GlobalConstants.TankHitpoints;
     BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
   }
 
@@ -35,10 +45,22 @@ public class TankPlayer : MonoBehaviour
 
     Camera.main.transform.position = _cameraPosition;
 
-    if (Input.GetKeyDown(KeyCode.X))
+    if (Input.GetKeyDown(KeyCode.X) && !_cooldown)
     {
+      _cooldown = true;
+
       GameObject b = Instantiate(Bullets[(int)_bulletType], new Vector3(ShotPoint.position.x, ShotPoint.position.y, ShotPoint.position.z), Quaternion.identity);
-      b.GetComponent<BulletBase>().Propel(new Vector3(_cos, _sin, 0.0f), GlobalConstants.BulletSpeedByType[_bulletType]);
+
+      if (_bulletType == GlobalConstants.BulletType.SPREAD)
+      {
+        b.GetComponent<BulletSpread>().Propel(new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
+      }
+      else
+      {
+        b.GetComponent<BulletBase>().Propel(new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
+      }
+
+      StartCoroutine(CooldownRoutine());
     }
 
     if (Input.GetKeyDown(KeyCode.W))
@@ -65,6 +87,58 @@ public class TankPlayer : MonoBehaviour
 
       BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
     }
+
+    HitpointsText.text = PlayerHitpoints.ToString();
+  }
+
+  float _cooldownTimer = 0.0f;
+  public float CooldownTimer
+  {
+    get { return _cooldownTimer; }
+  }
+
+  Vector2 _progressImageSize = new Vector2(32.0f, 32.0f);
+  IEnumerator CooldownRoutine()
+  {
+    _cooldownTimer = 0.0f;
+    int cond = GlobalConstants.BulletCooldownByType[_bulletType];
+
+    float progressDelta = 32.0f / cond;
+   
+    while (_cooldownTimer < cond)
+    {
+      _progressImageSize.y = 32.0f - _cooldownTimer * progressDelta;
+      BulletCooldownProgress.rectTransform.sizeDelta = _progressImageSize;
+
+      _cooldownTimer += Time.smoothDeltaTime * 1000.0f;
+
+      yield return null;
+    }
+
+    _progressImageSize.y = 0.0f;
+    BulletCooldownProgress.rectTransform.sizeDelta = _progressImageSize;
+
+    _cooldown = false;
+
+    yield return null;
+  }
+
+  public void ReceiveDamage(float damageReceived)
+  {
+    PlayerHitpoints -= damageReceived;
+
+    if (PlayerHitpoints < 0.0f)
+    {
+      DestroySelf();
+    }
+  }
+
+  void DestroySelf()
+  {
+    GameObject deathAnimation = Instantiate(PlayerDeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
+    Destroy(deathAnimation, 2.0f);
+
+    Destroy(gameObject);
   }
 
   float _tankRotation = 0.0f;
@@ -105,5 +179,13 @@ public class TankPlayer : MonoBehaviour
 
   void OnCollisionEnter2D(Collision2D collision)
   {    
+    if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
+    {
+      var enemy = collision.gameObject.GetComponent<EnemyBase>();
+
+      float damageDealt = GlobalConstants.TankRamDamage * enemy.Defence;
+
+      enemy.ReceiveDamage(damageDealt);
+    }
   }
 }

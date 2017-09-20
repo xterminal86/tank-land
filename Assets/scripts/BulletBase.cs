@@ -9,10 +9,10 @@ public class BulletBase : MonoBehaviour
 
   protected bool _stopMoving = false;
 
-  float _bulletSpeed = 0.0f;
+  protected float _bulletSpeed = 0.0f;
 
-  Vector2 _direction = Vector2.zero;
-  public void Propel(Vector2 direction, float bulletSpeed = 1.0f)
+  protected Vector2 _direction = Vector2.zero;
+  public virtual void Propel(Vector2 direction, float angle, float bulletSpeed = 1.0f)
   {
     _direction = direction;
     _bulletSpeed = bulletSpeed;
