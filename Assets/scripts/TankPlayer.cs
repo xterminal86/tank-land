@@ -184,6 +184,7 @@ public class TankPlayer : MonoBehaviour
 
       AppReference.IsGameOver = true;
       AppReference.GameOverSound.Play();
+      AppReference.RektSound.Play();
 
       DestroySelf();
     }

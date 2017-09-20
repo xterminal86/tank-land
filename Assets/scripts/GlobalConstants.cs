@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class GlobalConstants
 {
-  public const int MapSize = 100;
+  public const int MapSize = 50;
   public const int MaxWeaponIndex = 1;
   public const int MaxEnemies = 10;
   public const float SpawnTimeout = 3.0f;
@@ -20,17 +20,20 @@ public static class GlobalConstants
   public const int EnemyWeakHitpoints = 20;
   public const float EnemyWeakDefence = 0.8f;
   public const int EnemyWeakDamage = 10;
-  public const float EnemyWeakSpeed = 2.0f;
-
+  public const float EnemyWeakSpeed = 4.0f;
+  public const int EnemyWeakScore = 10;
+    
   public const int EnemyMediumHitpoints = 40;
   public const float EnemyMediumDefence = 0.5f;
   public const int EnemyMediumDamage = 20;
-  public const float EnemyMediumSpeed = 1.0f;
+  public const float EnemyMediumSpeed = 2.0f;
+  public const int EnemyMediumScore = 20;
 
   public const int EnemyHeavyHitpoints = 80;
   public const float EnemyHeavyDefence = 0.25f;
   public const int EnemyHeavyDamage = 60;
-  public const float EnemyHeavySpeed = 0.5f;
+  public const float EnemyHeavySpeed = 1.0f;
+  public const int EnemyHeavyScore = 40;
 
   public const float BulletLameSpeed = 20.0f;
   public const float BulletSplashSpeed = 10.0f;

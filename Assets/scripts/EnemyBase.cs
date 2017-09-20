@@ -64,6 +64,12 @@ public class EnemyBase : MonoBehaviour
 
     if (_hitpoints <= 0)
     {
+      if (this is EnemyWeak) _app.Score += GlobalConstants.EnemyWeakScore;
+      if (this is EnemyMedium) _app.Score += GlobalConstants.EnemyMediumScore;
+      if (this is EnemyHeavy) _app.Score += GlobalConstants.EnemyHeavyScore;
+
+      _app.ScoreCount.text = _app.Score.ToString();
+
       var explosion = Instantiate(DeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
 
       Destroy(explosion, 2.0f);
@@ -74,6 +80,7 @@ public class EnemyBase : MonoBehaviour
   }
 
   protected float _colorLerpParameter = 0.0f;
+  protected float _moveSpeed = 1.0f;
 
   Color _lerpedColor = Color.white;
 
@@ -114,7 +121,7 @@ public class EnemyBase : MonoBehaviour
 
     _damageIndicatorBar.transform.position = RigidbodyComponent.position;
 
-    RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (GlobalConstants.EnemyWeakSpeed * Time.fixedDeltaTime));
+    RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (_moveSpeed * Time.fixedDeltaTime));
 
     HitpointsText.text = _hitpoints.ToString();
   }

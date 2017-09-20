@@ -12,6 +12,7 @@ public class EnemyHeavy : EnemyBase
 
     _defence = GlobalConstants.EnemyHeavyDefence;
     _hitpoints = GlobalConstants.EnemyHeavyHitpoints;
+    _moveSpeed = GlobalConstants.EnemyHeavySpeed;
   }
 
   void OnCollisionEnter2D(Collision2D collision)

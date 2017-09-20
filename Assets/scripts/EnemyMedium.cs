@@ -12,6 +12,7 @@ public class EnemyMedium : EnemyBase
 
     _defence = GlobalConstants.EnemyMediumDefence;
     _hitpoints = GlobalConstants.EnemyMediumHitpoints;
+    _moveSpeed = GlobalConstants.EnemyMediumSpeed;
   }
 
   void OnCollisionEnter2D(Collision2D collision)

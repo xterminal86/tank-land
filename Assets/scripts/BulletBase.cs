@@ -12,6 +12,9 @@ public class BulletBase : MonoBehaviour
   float _viewLimitMinY = 0;
   float _viewLimitMaxY = 0;
 
+  // To prevent multiple collision checks when, e.g., splash bullet hits several objects
+  protected bool _isColliding = false;
+
   protected TankPlayer _playerRef;
 
   protected float _bulletSpeed = 0.0f;

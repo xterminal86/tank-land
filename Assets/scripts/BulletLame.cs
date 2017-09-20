@@ -8,6 +8,10 @@ public class BulletLame : BulletBase
 
   void OnCollisionEnter2D(Collision2D collision)
   {     
+    if (_isColliding) return;
+
+    _isColliding = true;
+
     var go = Instantiate(BulletHitAnimationPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
 
     Destroy(go, 1.0f);
