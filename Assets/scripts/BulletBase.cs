@@ -7,8 +7,6 @@ public class BulletBase : MonoBehaviour
   public Rigidbody2D RigidbodyComponent;
   public Animator AnimationComponent;
 
-  protected bool _stopMoving = false;
-
   protected float _bulletSpeed = 0.0f;
 
   protected Vector2 _direction = Vector2.zero;
@@ -20,11 +18,6 @@ public class BulletBase : MonoBehaviour
 
   void FixedUpdate()
   {
-    if (_stopMoving)
-    {
-      return;
-    }
-
     RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (_bulletSpeed * Time.fixedDeltaTime));
 
     if (RigidbodyComponent.position.x > GlobalConstants.MapSize || RigidbodyComponent.position.x < -1.0f ||

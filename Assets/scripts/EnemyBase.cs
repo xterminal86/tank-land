@@ -10,13 +10,16 @@ public class EnemyBase : MonoBehaviour
   public SpriteRenderer SpriteRendererComponent;
   public Text HitpointsText;
 
+  public GameObject DamageIndicatorPrefab;
+  public Canvas DamageIndicatorsCanvas;
+
   protected TankPlayer _player;
 
-  Vector2 _direction = Vector2.zero;
+  protected Vector2 _direction = Vector2.zero;
 
   protected Color _originalColor = Color.white;
 
-  protected float _hitpoints = 1.0f;
+  protected int _hitpoints = 1;
   protected float _defence = 1.0f;
   public float Defence
   {
@@ -24,12 +27,16 @@ public class EnemyBase : MonoBehaviour
   }
 
   void Awake()
-  { 
+  {     
     Init();
   }
 
+  protected DamageIndicator _damageIndicatorBar;
   protected virtual void Init()
-  {
+  { 
+    var go = Instantiate(DamageIndicatorPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity, DamageIndicatorsCanvas.transform);
+    _damageIndicatorBar = go.GetComponent<DamageIndicator>();
+
     _originalColor = SpriteRendererComponent.color;
 
     _player = GameObject.Find("tank-player").GetComponent<TankPlayer>();
@@ -38,24 +45,66 @@ public class EnemyBase : MonoBehaviour
     _direction.Normalize();
   }
 
-  public void ReceiveDamage(float damageReceived)
+  public void ReceiveDamage(int damageReceived)
   {
+    _damageShowTimeout = 0.0f;
+    _showDamageBar = true;
+
     _hitpoints -= damageReceived;
 
-    if (_hitpoints < 0.0f)
+    _damageIndicatorBar.Damage(damageReceived);
+
+    if (_hitpoints <= 0)
     {
       var explosion = Instantiate(DeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
 
       Destroy(explosion, 2.0f);
 
+      Destroy(_damageIndicatorBar.gameObject);
       Destroy(gameObject);
     }
   }
 
+  protected float _colorLerpParameter = 0.0f;
+
+  Color _lerpedColor = Color.white;
+
+  float _damageShowTimeout = 0.0f;
+  bool _showDamageBar = false;
+  void Update()
+  {
+    _damageShowTimeout += Time.smoothDeltaTime;
+
+    if (_damageShowTimeout > 2.0f)
+    {
+      _showDamageBar = false;
+    }
+
+    if (_damageIndicatorBar != null)
+    {
+      _damageIndicatorBar.gameObject.SetActive(_showDamageBar);
+    }
+
+    _colorLerpParameter += Time.smoothDeltaTime;
+
+    _colorLerpParameter = Mathf.Clamp(_colorLerpParameter, 0.0f, 1.0f);
+
+    _lerpedColor = Color.Lerp(Color.red, _originalColor, _colorLerpParameter);
+
+    SpriteRendererComponent.color = _lerpedColor;
+  }
+
   void FixedUpdate()
   {
+    if (_player == null)
+    {
+      return;
+    }
+
     _direction = _player.RigidbodyComponent.position - RigidbodyComponent.position;
     _direction.Normalize();
+
+    _damageIndicatorBar.transform.position = RigidbodyComponent.position;
 
     RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (GlobalConstants.EnemyWeakSpeed * Time.fixedDeltaTime));
 

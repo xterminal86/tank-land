@@ -8,6 +8,8 @@ public class EnemyWeak : EnemyBase
   {
     base.Init();
   
+    _damageIndicatorBar.Setup(GlobalConstants.EnemyWeakHitpoints);
+
     _defence = GlobalConstants.EnemyWeakDefence;
     _hitpoints = GlobalConstants.EnemyWeakHitpoints;
   }
@@ -21,28 +23,15 @@ public class EnemyWeak : EnemyBase
 
       if (l == "Player")
       {
-        float damageDealt = GlobalConstants.EnemyWeakDamage * GlobalConstants.TankDefence;
+        int damageDealt = (int)((float)GlobalConstants.EnemyWeakDamage * GlobalConstants.TankDefence);
 
+        _player.Push(_direction * GlobalConstants.EnemyPushForceFactor);
         _player.ReceiveDamage(damageDealt);
       }
       else
       {
-        _damageIndicator = 0.0f;
+        _colorLerpParameter = 0.0f;
       }
     }
-  }
-
-  float _damageIndicator = 0.0f;
-
-  Color _lerpedColor = Color.white;
-  void Update()
-  {
-    _damageIndicator += Time.smoothDeltaTime;
-
-    _damageIndicator = Mathf.Clamp(_damageIndicator, 0.0f, 1.0f);
-
-    _lerpedColor = Color.Lerp(Color.red, _originalColor, _damageIndicator);
-
-    SpriteRendererComponent.color = _lerpedColor;
   }
 }

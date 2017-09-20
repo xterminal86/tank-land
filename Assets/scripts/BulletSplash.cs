@@ -4,21 +4,25 @@ using UnityEngine;
 
 public class BulletSplash : BulletBase 
 {
+  public GameObject BulletHitAnimationPrefab;
+
   void OnCollisionEnter2D(Collision2D collision)
   {
-    _stopMoving = true;
+    //AnimationComponent.SetTrigger("bullet-hit");
 
-    AnimationComponent.SetTrigger("bullet-hit");
+    var go = Instantiate(BulletHitAnimationPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
 
-    Destroy(gameObject, 1.0f);
+    Destroy(go, 1.0f);
 
     if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
     {
       var enemy = collision.gameObject.GetComponent<EnemyBase>();
 
-      float damageDealt = GlobalConstants.BulletSplashDamage * enemy.Defence;
+      int damageDealt = (int)((float)GlobalConstants.BulletSplashDamage * enemy.Defence);
 
       enemy.ReceiveDamage(damageDealt);
     }
+
+    Destroy(gameObject);
   }
 }

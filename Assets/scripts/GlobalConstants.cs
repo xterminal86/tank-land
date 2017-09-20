@@ -10,21 +10,25 @@ public static class GlobalConstants
   public const int BulletSpreadCooldown = 500;
   public const int BulletSplashCooldown = 1000;
 
+  public const int TankHitpoints = 400;
+  public const float TankDefence = 0.5f;
+  public const int TankRamDamage = 5;
+
+  public const int EnemyWeakHitpoints = 20;
+  public const float EnemyWeakDefence = 0.8f;
+  public const int EnemyWeakDamage = 10;
+  public const float EnemyWeakSpeed = 2.0f;
+
   public const float BulletLameSpeed = 20.0f;
   public const float BulletSplashSpeed = 10.0f;
-  public const float BulletLameDamage = 0.1f;
-  public const float BulletSplashDamage = 2.0f;
+  public const int BulletLameDamage = 2;
+  public const int BulletSplashDamage = 10;
   public const float BulletSpreadArcAngle = 60.0f;
 
   public const float TankMoveSpeed = 6.0f;
-  public const float TankRotationSpeed = 2.0f;
-  public const float TankHitpoints = 20.0f;
-  public const float TankDefence = 0.5f;
-  public const float TankRamDamage = 0.2f;
-  public const float EnemyWeakSpeed = 1.0f;
-  public const float EnemyWeakHitpoints = 1.0f;
-  public const float EnemyWeakDefence = 0.8f;
-  public const float EnemyWeakDamage = 0.2f;
+  public const float TankRotationSpeed = 1.0f;
+
+  public const float EnemyPushForceFactor = 10.0f;
 
   public enum BulletType
   {

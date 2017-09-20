@@ -13,7 +13,7 @@ public class TankPlayer : MonoBehaviour
   public Image BulletTypeSprite;
   public Image BulletCooldownProgress;
 
-  public Text HitpointsText;
+  public Image HitpointsBar;
 
   public GameObject PlayerDeathAnimation;
 
@@ -28,12 +28,29 @@ public class TankPlayer : MonoBehaviour
 
   bool _cooldown = false;
 
-  public float PlayerHitpoints = GlobalConstants.TankHitpoints;
+  [HideInInspector]
+  public int PlayerHitpoints = GlobalConstants.TankHitpoints;
 
+  float _hpProgressDelta = 0.0f;
+  float _hpBarOriginalWidth = 100.0f;
+  Vector2 _hitpointsBarSize = Vector2.zero;
+  float _redComponent = 1.0f;
+  float _greenComponent = 1.0f;
+  float _halfDelfa = 0.0f;
+  Color _hitpointsBarColor = Color.green;
+  int _tankHitpointsHalf = 1;
   void Awake()
   {
+    _tankHitpointsHalf = GlobalConstants.TankHitpoints / 2;
     PlayerHitpoints = GlobalConstants.TankHitpoints;
     BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
+
+    _hpBarOriginalWidth = HitpointsBar.rectTransform.sizeDelta.x;
+    _hitpointsBarSize = HitpointsBar.rectTransform.sizeDelta;
+
+    _hpProgressDelta = _hpBarOriginalWidth / GlobalConstants.TankHitpoints;
+
+    _halfDelfa = 1.0f / (float)(_tankHitpointsHalf);
   }
 
   Vector3 _cameraPosition = Vector3.zero;
@@ -88,7 +105,30 @@ public class TankPlayer : MonoBehaviour
       BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
     }
 
-    HitpointsText.text = PlayerHitpoints.ToString();
+    if (Input.GetKeyDown(KeyCode.I))
+    {
+      RigidbodyComponent.AddForce(_direction * 10.0f, ForceMode2D.Impulse);
+    }
+
+    if (PlayerHitpoints > _tankHitpointsHalf)
+    {
+      _redComponent = 1.0f - (float)(PlayerHitpoints - _tankHitpointsHalf) * _halfDelfa;
+      _greenComponent = 1.0f;
+    }
+    else
+    {
+      _redComponent = 1.0f;
+      _greenComponent = (float)PlayerHitpoints * _halfDelfa;
+    }
+
+    _hitpointsBarColor.r = _redComponent;
+    _hitpointsBarColor.g = _greenComponent;
+
+    HitpointsBar.color = _hitpointsBarColor;
+
+    _hitpointsBarSize.x = _hpProgressDelta * PlayerHitpoints;
+
+    HitpointsBar.rectTransform.sizeDelta = _hitpointsBarSize;
   }
 
   float _cooldownTimer = 0.0f;
@@ -123,11 +163,11 @@ public class TankPlayer : MonoBehaviour
     yield return null;
   }
 
-  public void ReceiveDamage(float damageReceived)
+  public void ReceiveDamage(int damageReceived)
   {
     PlayerHitpoints -= damageReceived;
 
-    if (PlayerHitpoints < 0.0f)
+    if (PlayerHitpoints <= 0)
     {
       DestroySelf();
     }
@@ -141,12 +181,19 @@ public class TankPlayer : MonoBehaviour
     Destroy(gameObject);
   }
 
+  bool _isBeingPushed = false;
+  public void Push(Vector2 dir)
+  {
+    _isBeingPushed = true;
+    RigidbodyComponent.AddForce(dir, ForceMode2D.Impulse);
+  }
+
   float _tankRotation = 0.0f;
   float _cos = 0.0f;
   float _sin = 0.0f;
   Vector2 _direction = Vector2.zero;
   void FixedUpdate()
-  {
+  { 
     _isMoving = Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow);
 
     if (Input.GetKey(KeyCode.LeftArrow))
@@ -169,7 +216,16 @@ public class TankPlayer : MonoBehaviour
     AnimationComponent.SetBool("IsMoving", _isMoving);
 
     RigidbodyComponent.rotation = _tankRotation;
-    RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (_acceleration * Time.fixedDeltaTime));
+
+    if ((int)RigidbodyComponent.velocity.x < 3 && (int)RigidbodyComponent.velocity.y < 3)
+    {
+      _isBeingPushed = false;
+    }
+
+    if (!_isBeingPushed)
+    {
+      RigidbodyComponent.MovePosition(RigidbodyComponent.position + _direction * (_acceleration * Time.fixedDeltaTime));
+    }
   }
 
   public void SetPlayerPosition(Vector3 newPosition)
@@ -179,6 +235,7 @@ public class TankPlayer : MonoBehaviour
 
   void OnCollisionEnter2D(Collision2D collision)
   {    
+    /*
     if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
     {
       var enemy = collision.gameObject.GetComponent<EnemyBase>();
@@ -187,5 +244,6 @@ public class TankPlayer : MonoBehaviour
 
       enemy.ReceiveDamage(damageDealt);
     }
+    */
   }
 }
