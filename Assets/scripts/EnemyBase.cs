@@ -91,6 +91,9 @@ public class EnemyBase : MonoBehaviour
       }
 
       var explosion = Instantiate(DeathAnimation, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
+      var ps = explosion.GetComponent<ParticleSystem>().main;
+      ParticleSystem.MinMaxGradient g = new ParticleSystem.MinMaxGradient(_originalColor);
+      ps.startColor = g;
 
       Destroy(explosion, 2.0f);
 

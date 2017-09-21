@@ -24,6 +24,7 @@ public class Main : MonoBehaviour
   public Text ScoreCount;
 
   public GameObject GameOverForm;
+  public GameObject LoadingScreen;
 
   [HideInInspector]
   public bool IsGameOver = false;
@@ -31,14 +32,32 @@ public class Main : MonoBehaviour
   [HideInInspector]
   public int Score = 0;
 
+  void OnEnable()
+  {
+    SceneManager.sceneLoaded += SceneLoadedHandler;
+  }
+
+  void OnDisable()
+  {
+    SceneManager.sceneLoaded -= SceneLoadedHandler;
+  }
+
+  bool _isLoading = false;
+  void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
+  {
+    _isLoading = true;
+
+    StartCoroutine(BuildMapRoutine());
+  }
+
   List<Vector2> _obstaclesGrid = new List<Vector2>();
-  void Awake()
+  IEnumerator BuildMapRoutine()
   {
     for (int x = 0; x < GlobalConstants.MapSize; x++)
     {
       for (int y = 0; y < GlobalConstants.MapSize; y++)
       {
-        Instantiate(TerrainTile, new Vector3(x, y, 0.0f), Quaternion.identity, ObjectsHolder.transform);       
+        Instantiate(TerrainTile, new Vector3(x, y, 0.0f), Quaternion.identity, ObjectsHolder.transform);
       }
     }
 
@@ -58,8 +77,29 @@ public class Main : MonoBehaviour
 
     Score = 0;
     ScoreCount.text = Score.ToString();
+
+    _isLoading = false;
+
+    yield return StartCoroutine(WaitForSecondsRoutine(2.0f));
+
+    LoadingScreen.SetActive(false);
+
+    yield return null;
   }
     
+  IEnumerator WaitForSecondsRoutine(float timeToWait)
+  {
+    float timer = 0.0f;
+    while (timer < timeToWait)
+    {
+      timer += Time.smoothDeltaTime;
+
+      yield return null;
+    }
+
+    yield return null;
+  }
+
   void PlaceBorder()
   {
     for (float i = -0.6f; i < GlobalConstants.MapSize - 0.6f; i += 0.6f)
@@ -195,7 +235,15 @@ public class Main : MonoBehaviour
   float _spawnTimer = 0.0f;
   void Update()
   {
+    if (_isLoading) return;
+
     CountEnemies();
+
+    if (Input.GetKeyDown(KeyCode.R))
+    {
+      SceneManager.LoadScene("main");
+      return;
+    }
 
     if (EnemiesSpawned >= GlobalConstants.MaxEnemies || IsGameOver)
     {
