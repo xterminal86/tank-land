@@ -6,7 +6,9 @@ public class EnemyHeavy : EnemyBase
 {
   public BulletEnemyHeavy BulletPrefab;
   public AudioSource BulletFireSound;
+  public Transform FireIndicator;
 
+  float _fireIndicatorDelta = 0.0f;
   protected override void Init()
   {
     base.Init();
@@ -16,6 +18,8 @@ public class EnemyHeavy : EnemyBase
     _defence = GlobalConstants.EnemyHeavyDefence;
     _hitpoints = GlobalConstants.EnemyHeavyHitpoints;
     _moveSpeed = GlobalConstants.EnemyHeavySpeed;
+
+    _fireIndicatorDelta = 1.0f / GlobalConstants.EnemyHeavyFireTimeout;
   }
 
   void OnCollisionEnter2D(Collision2D collision)
@@ -43,20 +47,26 @@ public class EnemyHeavy : EnemyBase
 
   float _timer = 0.0f;
   float _firingRadius = 20.0f;
+  float _currentFireReadyIndicatorScale = 0.0f;
+  Vector3 _fireIndicatorScale = Vector3.one;
   protected override void Update()
   {
     base.Update();
 
     if (_app.IsGameOver) return;
 
-    // Fire at player
-
     _timer += Time.smoothDeltaTime;
 
-    if (_timer > GlobalConstants.EnemyHeavyFireTimeout)
-    {
-      _timer = 0.0f;
+    _currentFireReadyIndicatorScale = _timer * _fireIndicatorDelta;
+    _currentFireReadyIndicatorScale = Mathf.Clamp(_currentFireReadyIndicatorScale, 0.0f, 1.0f);
+    _fireIndicatorScale.Set(_currentFireReadyIndicatorScale, _currentFireReadyIndicatorScale, _currentFireReadyIndicatorScale);
 
+    FireIndicator.localScale = _fireIndicatorScale;
+
+    // Fire at player
+
+    if (_timer > GlobalConstants.EnemyHeavyFireTimeout)
+    {      
       float px = _player.RigidbodyComponent.position.x;
       float py = _player.RigidbodyComponent.position.y;
       float ex = RigidbodyComponent.position.x;
@@ -70,6 +80,8 @@ public class EnemyHeavy : EnemyBase
       // If player in range
       if (px > lx && px < hx && py > ly && py < hy)
       {
+        _timer = 0.0f;
+
         BulletFireSound.Play();
 
         var go = Instantiate(BulletPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);

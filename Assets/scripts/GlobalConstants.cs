@@ -34,13 +34,13 @@ public static class GlobalConstants
   public const int EnemyHeavyDamage = 60;
   public const float EnemyHeavyFireTimeout = 5.0f;
   public const float EnemyHeavySpeed = 1.0f;
-  public const float EnemyHeavyBulletSpeed = 20.0f;
+  public const float EnemyHeavyBulletSpeed = 10.0f;
   public const int EnemyHeavyScore = 40;
 
   public const float BulletLameSpeed = 20.0f;
   public const float BulletSplashSpeed = 10.0f;
   public const int BulletLameDamage = 10;
-  public const int BulletSplashDamage = 80;
+  public const int BulletSplashDamage = 120;
   public const float BulletSplashRadius = 5.0f;
   public const float BulletSpreadArcAngle = 60.0f;
 

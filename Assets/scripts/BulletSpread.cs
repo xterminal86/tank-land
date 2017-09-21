@@ -8,12 +8,20 @@ public class BulletSpread : BulletBase
 
   List<Vector2> _directions = new List<Vector2>();
   public override void Propel(Vector2 origin, Vector2 direction, float angle, float bulletSpeed = 1)
-  {     
-    float angleDelta = GlobalConstants.BulletSpreadArcAngle / Bullets.Count;
-    float startingAngle = angle - GlobalConstants.BulletSpreadArcAngle / 2.0f;
+  { 
+    bool isBulletsCountEven = (Bullets.Count % 2 == 0);
+    int bulletsEven = isBulletsCountEven ? Bullets.Count : Bullets.Count - 1;
+    int indexToSkip = Bullets.Count / 2;
+    float angleDelta = GlobalConstants.BulletSpreadArcAngle / bulletsEven;
+    float startingAngle = angle - angleDelta * (bulletsEven / 2);
 
-    for (int i = 0; i < Bullets.Count; i++)
-    {
+    for (int i = 0; i <= Bullets.Count; i++)
+    { 
+      if (isBulletsCountEven && i == indexToSkip)
+      {
+        continue;
+      }
+
       float thisAngle = startingAngle + angleDelta * i;
       float cos = Mathf.Cos(thisAngle * Mathf.Deg2Rad);
       float sin = Mathf.Sin(thisAngle * Mathf.Deg2Rad);
