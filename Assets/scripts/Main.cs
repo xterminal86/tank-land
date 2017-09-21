@@ -19,6 +19,7 @@ public class Main : MonoBehaviour
 
   public AudioSource GameOverSound;
   public AudioSource RektSound;
+  public AudioSource EnemyHitSound;
 
   public Text DebugText;
   public Text ScoreCount;

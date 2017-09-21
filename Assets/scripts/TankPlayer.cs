@@ -16,7 +16,6 @@ public class TankPlayer : MonoBehaviour
   public Image HitpointsBar;
 
   public GameObject PlayerDeathAnimation;
-  public AudioSource EnemyHitSound;
 
   public List<GameObject> Bullets;
   public List<Sprite> WeaponIcons;

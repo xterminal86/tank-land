@@ -20,9 +20,9 @@ public class BulletLame : BulletBase
     {
       var enemy = collision.gameObject.GetComponent<EnemyBase>();
 
-      if (!_playerRef.EnemyHitSound.isPlaying)
+      if (!_appRef.EnemyHitSound.isPlaying)
       {
-        _playerRef.EnemyHitSound.Play();
+        _appRef.EnemyHitSound.Play();
       }
 
       int damageDealt = (int)((float)GlobalConstants.BulletLameDamage * enemy.Defence);
