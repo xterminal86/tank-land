@@ -11,7 +11,6 @@ public class EnemyBase : MonoBehaviour
   public Text HitpointsText;
 
   public GameObject DamageIndicatorPrefab;
-  public AudioSource AttackSound;
 
   [HideInInspector]
   public RectTransform DamageIndicatorsCanvas;

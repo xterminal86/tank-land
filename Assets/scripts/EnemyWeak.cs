@@ -24,7 +24,7 @@ public class EnemyWeak : EnemyBase
 
       if (l == "Player")
       {
-        AttackSound.Play();
+        _player.PlayerHitSound.Play();
 
         int damageDealt = (int)((float)GlobalConstants.EnemyWeakDamage * GlobalConstants.TankDefence);
 

@@ -31,7 +31,7 @@ public class EnemyHeavy : EnemyBase
 
       if (l == "Player")
       {
-        AttackSound.Play();
+        _player.PlayerHitSound.Play();
 
         int damageDealt = (int)((float)GlobalConstants.EnemyHeavyDamage * GlobalConstants.TankDefence);
 

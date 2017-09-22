@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,8 @@ public class TankPlayer : MonoBehaviour
   public Image HitpointsBar;
 
   public GameObject PlayerDeathAnimation;
+
+  public AudioSource PlayerHitSound;
 
   public List<GameObject> Bullets;
   public List<Sprite> WeaponIcons;
@@ -112,10 +115,12 @@ public class TankPlayer : MonoBehaviour
       BulletTypeSprite.sprite = WeaponIcons[(int)_bulletType];
     }
 
-    if (Input.GetKeyDown(KeyCode.I))
+    #if UNITY_EDITOR
+    if (Input.GetKeyDown(KeyCode.Comma))
     {
-      RigidbodyComponent.AddForce(_direction * 10.0f, ForceMode2D.Impulse);
+      ReceiveDamage(GlobalConstants.TankHitpoints + 1);
     }
+    #endif
 
     if (PlayerHitpoints > _tankHitpointsHalf)
     {
@@ -185,7 +190,21 @@ public class TankPlayer : MonoBehaviour
       AppReference.GameOverSound.Play();
       AppReference.RektSound.Play();
 
+      WriteScore();
       DestroySelf();
+    }
+  }
+
+  string _scoresFilename = "scores.txt";
+  void WriteScore()
+  {
+    System.DateTime now = System.DateTime.Now;
+
+    string text = string.Format("{0}/{1}/{2} {3}:{4}:{5} = {1}\n", now.Day, now.Month, now.Year, now.Hour, now.Minute, now.Second, AppReference.Score);
+
+    using (StreamWriter sw = File.AppendText(_scoresFilename))
+    {
+      sw.WriteLine(text);
     }
   }
 

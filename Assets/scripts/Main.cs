@@ -101,18 +101,21 @@ public class Main : MonoBehaviour
     yield return null;
   }
 
+  float _mapBorderOffset = 1.0f; // -0.6f
   void PlaceBorder()
   {
-    for (float i = -0.6f; i < GlobalConstants.MapSize - 0.6f; i += 0.6f)
+    //float half = _mapBorderOffset / 2.0f;
+
+    for (float i = -_mapBorderOffset; i < GlobalConstants.MapSize + _mapBorderOffset; i += _mapBorderOffset)
     {
-      Instantiate(MapBorder, new Vector3(i, -0.6f, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
-      Instantiate(MapBorder, new Vector3(i, GlobalConstants.MapSize - 0.6f, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
+      Instantiate(MapBorder, new Vector3(i, -_mapBorderOffset, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
+      Instantiate(MapBorder, new Vector3(i, GlobalConstants.MapSize, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
     }
 
-    for (float i = 0.0f; i < GlobalConstants.MapSize - 0.6f; i += 0.6f)
+    for (float i = -_mapBorderOffset; i < GlobalConstants.MapSize + _mapBorderOffset; i += _mapBorderOffset)
     {
-      Instantiate(MapBorder, new Vector3(-0.6f, i, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
-      Instantiate(MapBorder, new Vector3(GlobalConstants.MapSize - 0.6f, i, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
+      Instantiate(MapBorder, new Vector3(-_mapBorderOffset, i, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
+      Instantiate(MapBorder, new Vector3(GlobalConstants.MapSize, i, MapBorder.transform.position.z), Quaternion.identity, ObjectsHolder.transform);
     }
   }
 
