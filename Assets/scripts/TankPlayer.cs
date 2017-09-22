@@ -18,11 +18,8 @@ public class TankPlayer : MonoBehaviour
 
   public GameObject PlayerDeathAnimation;
 
-  public AudioSource PlayerHitSound;
-
   public List<GameObject> Bullets;
   public List<Sprite> WeaponIcons;
-  public List<AudioSource> ShotSounds;
 
   GlobalConstants.BulletType _bulletType = GlobalConstants.BulletType.LAME;
 
@@ -85,7 +82,7 @@ public class TankPlayer : MonoBehaviour
         b.GetComponent<BulletBase>().Propel(bulletOrigin, new Vector3(_cos, _sin, 0.0f), _tankRotation, GlobalConstants.BulletSpeedByType[_bulletType]);
       }
 
-      ShotSounds[(int)_bulletType].Play();
+      AppReference.PlaySound(AppReference.ShotSounds[(int)_bulletType]);
 
       StartCoroutine(CooldownRoutine());
     }

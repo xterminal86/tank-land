@@ -24,7 +24,7 @@ public class EnemyMedium : EnemyBase
 
       if (l == "Player")
       {
-        _player.PlayerHitSound.Play();
+        _app.PlaySound(_app.PlayerHitSound);
 
         int damageDealt = (int)((float)GlobalConstants.EnemyMediumDamage * GlobalConstants.TankDefence);
 

@@ -20,6 +20,9 @@ public class Main : MonoBehaviour
   public AudioSource GameOverSound;
   public AudioSource RektSound;
   public AudioSource EnemyHitSound;
+  public AudioSource PlayerHitSound;
+
+  public List<AudioSource> ShotSounds;
 
   public Text DebugText;
   public Text ScoreCount;
@@ -324,5 +327,17 @@ public class Main : MonoBehaviour
   public void RestartGameHandler()
   {
     SceneManager.LoadScene("main");
+  }
+
+  public void PlaySound(AudioSource premade)
+  {
+    GameObject go = new GameObject("snd-" + premade.name);
+    AudioSource a = go.AddComponent<AudioSource>();
+    a.playOnAwake = false;
+    a.volume = premade.volume;
+    a.clip = premade.clip;    
+    float length = a.clip.length;
+    a.Play();
+    Destroy(go, length);    
   }
 }

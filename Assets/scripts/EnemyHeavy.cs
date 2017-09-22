@@ -5,7 +5,6 @@ using UnityEngine;
 public class EnemyHeavy : EnemyBase
 {
   public BulletEnemyHeavy BulletPrefab;
-  public AudioSource BulletFireSound;
   public Transform FireIndicator;
 
   public PolygonCollider2D ColliderComponent;
@@ -33,7 +32,7 @@ public class EnemyHeavy : EnemyBase
 
       if (l == "Player")
       {
-        _player.PlayerHitSound.Play();
+        _app.PlaySound(_app.PlayerHitSound);
 
         int damageDealt = (int)((float)GlobalConstants.EnemyHeavyDamage * GlobalConstants.TankDefence);
 
@@ -84,7 +83,7 @@ public class EnemyHeavy : EnemyBase
       {
         _timer = 0.0f;
 
-        BulletFireSound.Play();
+        _app.PlaySound(_app.ShotSounds[3]);
 
         var go = Instantiate(BulletPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
         var dir = _player.RigidbodyComponent.position - RigidbodyComponent.position;

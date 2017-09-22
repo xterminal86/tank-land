@@ -23,6 +23,7 @@ public class BulletLame : BulletBase
     {
       var enemy = collision.gameObject.GetComponent<EnemyBase>();
 
+      // We don't need multiple hit sounds played in short interval (e.g. spread shot at close range)
       if (!_appRef.EnemyHitSound.isPlaying)
       {
         _appRef.EnemyHitSound.Play();
