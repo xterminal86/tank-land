@@ -16,7 +16,11 @@ public class BulletLame : BulletBase
 
     Destroy(go, 1.0f);
 
-    if (collision.gameObject.layer == LayerMask.NameToLayer("Enemies"))
+    int layer1 = LayerMask.NameToLayer("Enemies");
+    int layer2 = LayerMask.NameToLayer("Enemies2");
+    int layerToCheck = collision.gameObject.layer;
+
+    if (layerToCheck == layer1 || layerToCheck == layer2)
     {
       var enemy = collision.gameObject.GetComponent<EnemyBase>();
 

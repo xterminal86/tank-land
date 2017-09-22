@@ -26,7 +26,9 @@ public class BulletSplash : BulletBase
 
     foreach (var obj in objects)
     {
-      if (obj.gameObject.layer == playerLayer || obj.gameObject.layer == enemiesLayer)
+      int layerToCheck = obj.gameObject.layer;
+
+      if (layerToCheck == playerLayer || layerToCheck == enemiesLayer)
       {
         float distance = Vector2.Distance(RigidbodyComponent.position, obj.attachedRigidbody.position);
 

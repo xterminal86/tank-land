@@ -36,6 +36,14 @@ public class BulletSpread : BulletBase
     }
   }
 
+  void Update()
+  {
+    if (transform.childCount == 0)
+    {
+      Destroy(gameObject);
+    }
+  }
+
   // Disable FixedUpdate code in base class by implementing empty method here
   void FixedUpdate()
   {

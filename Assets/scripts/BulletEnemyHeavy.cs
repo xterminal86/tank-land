@@ -6,15 +6,6 @@ public class BulletEnemyHeavy : BulletBase
 {
   public GameObject BulletHitAnimationPrefab;
 
-  void OnCollisionStay2D(Collision2D collision)
-  {
-    if (_isColliding) return;
-
-    _isColliding = true;
-
-    ProcessCollision();
-  }
-
   void OnCollisionEnter2D(Collision2D collision)
   {
     if (_isColliding) return;
