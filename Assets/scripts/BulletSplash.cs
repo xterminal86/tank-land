@@ -23,12 +23,13 @@ public class BulletSplash : BulletBase
 
     int playerLayer = LayerMask.NameToLayer("Player");
     int enemiesLayer = LayerMask.NameToLayer("Enemies");
+    int enemiesLayer2 = LayerMask.NameToLayer("Enemies2");
 
     foreach (var obj in objects)
     {
       int layerToCheck = obj.gameObject.layer;
 
-      if (layerToCheck == playerLayer || layerToCheck == enemiesLayer)
+      if (layerToCheck == playerLayer || layerToCheck == enemiesLayer || layerToCheck == enemiesLayer2)
       {
         float distance = Vector2.Distance(RigidbodyComponent.position, obj.attachedRigidbody.position);
 
@@ -36,7 +37,7 @@ public class BulletSplash : BulletBase
 
         int distanceSquared = (int)Mathf.Pow(distance, 2.0f);
 
-        if (obj.gameObject.layer == enemiesLayer)
+        if (layerToCheck == enemiesLayer || layerToCheck == enemiesLayer2)
         {
           var enemy = obj.gameObject.GetComponentInParent<EnemyBase>();
 
@@ -49,7 +50,7 @@ public class BulletSplash : BulletBase
 
           //Debug.Log(obj.attachedRigidbody.position + " took " + damageDealt + " damage");
         }
-        else if (obj.gameObject.layer == playerLayer)
+        else if (layerToCheck == playerLayer)
         {
           var player = obj.gameObject.GetComponentInParent<TankPlayer>();
 
