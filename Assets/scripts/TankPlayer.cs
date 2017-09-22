@@ -200,7 +200,7 @@ public class TankPlayer : MonoBehaviour
   {
     System.DateTime now = System.DateTime.Now;
 
-    string text = string.Format("{0}/{1}/{2} {3}:{4}:{5} = {1}\n", now.Day, now.Month, now.Year, now.Hour, now.Minute, now.Second, AppReference.Score);
+    string text = string.Format("{0}/{1}/{2} {3}:{4}:{5} = {6}\n", now.Day, now.Month, now.Year, now.Hour, now.Minute, now.Second, AppReference.Score);
 
     using (StreamWriter sw = File.AppendText(_scoresFilename))
     {
