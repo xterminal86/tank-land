@@ -8,6 +8,8 @@ public class EnemyHeavy : EnemyBase
   public AudioSource BulletFireSound;
   public Transform FireIndicator;
 
+  public PolygonCollider2D ColliderComponent;
+
   float _fireIndicatorDelta = 0.0f;
   protected override void Init()
   {
@@ -86,6 +88,10 @@ public class EnemyHeavy : EnemyBase
 
         var go = Instantiate(BulletPrefab, new Vector3(RigidbodyComponent.position.x, RigidbodyComponent.position.y, -1.0f), Quaternion.identity);
         var dir = _player.RigidbodyComponent.position - RigidbodyComponent.position;
+        var bulletCollider = go.GetComponent<BoxCollider2D>();
+
+        // Prevent self shot
+        Physics2D.IgnoreCollision(bulletCollider, ColliderComponent);
 
         go.GetComponent<BulletEnemyHeavy>().Propel(RigidbodyComponent.position, dir.normalized, -1.0f, GlobalConstants.EnemyHeavyBulletSpeed);
       }
