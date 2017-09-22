@@ -42,7 +42,7 @@ public class BulletEnemyHeavy : BulletBase
 
         int distanceSquared = (int)Mathf.Pow(distance, 2.0f);
 
-        if (obj.gameObject.layer == enemiesLayer)
+        if (layerToCheck == enemiesLayer || layerToCheck == enemiesLayer2)
         {
           var enemy = obj.gameObject.GetComponentInParent<EnemyBase>();
 
@@ -55,7 +55,7 @@ public class BulletEnemyHeavy : BulletBase
 
           //Debug.Log(obj.attachedRigidbody.position + " took " + damageDealt + " damage");
         }
-        else if (obj.gameObject.layer == playerLayer)
+        else if (layerToCheck == playerLayer)
         {
           var player = obj.gameObject.GetComponentInParent<TankPlayer>();
 
